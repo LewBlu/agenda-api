@@ -4,8 +4,8 @@ const router = express.Router();
 // Require Controllers
 const projectsController = require('../controllers/projects');
 
-
 // Project specific routes
-router.use('/', projectsController.getProjects);
+router.get('/', projectsController.getProjects);
+router.get('/create', projectsController.createProject);
 
 module.exports = router;
