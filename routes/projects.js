@@ -6,6 +6,7 @@ const projectsController = require('../controllers/projects');
 
 // Project specific routes
 router.get('/', projectsController.getProjects);
+router.get('/:projectID', projectsController.getProjectByID);
 router.get('/create', projectsController.createProject);
 
 module.exports = router;
