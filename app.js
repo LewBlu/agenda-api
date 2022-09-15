@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const dotenv = require('dotenv').config();
 const sequelize = require('./utilities/database');
 const passport = require('passport');
 const session = require('express-session');
