@@ -57,15 +57,15 @@ passport.deserializeUser(function (user, cb) {
 
 // Local Strategy
 passport.use(new LocalStrategy((username, password, callback) => {
-	console.log('here');
 	User.findOne({ username: 'lewis'}).then(result => {
+		console.log(result);
 		if (!result.length) { return callback(null, false, { message: 'Incorrect username or password.' }); }
-		crypto.pbkdf2('password', result[0].salt, 310000, 32, 'sha256', function (err, hashedPassword) {
+		crypto.pbkdf2('password', result.salt, 310000, 32, 'sha256', function (err, hashedPassword) {
             if (err) { return callback(err); }
-            if (!crypto.timingSafeEqual(result[0].hashed_password, hashedPassword)) {
+            if (!crypto.timingSafeEqual(result.hashed_password, hashedPassword)) {
                 return callback(null, false, { message: 'Incorrect username or password.' });
             }
-            return callback(null, result[0]);
+            return callback(null, result);
         });
 	}).catch(err => nextTick(err));
 }));
