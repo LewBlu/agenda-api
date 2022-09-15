@@ -7,7 +7,14 @@ const crypto = require('crypto');
 const LocalStrategy = require('passport-local');
 const MySQLStore = require('express-mysql-session')(session);
 
-const User = require('./models/user')
+const db_options = {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+};
+
+const User = require('./models/user');
 // Require routes
 const projectRoutes = require('./routes/projects');
 const { nextTick } = require('process');
@@ -21,7 +28,8 @@ app.use(bodyParser.json());
 app.use(session({
 	secret: 'keyboard cat',
 	resave: true,
-	saveUninitialized: true
+	saveUninitialized: true,
+	store: new MySQLStore(db_options)
 }));
 app.use(passport.initialize());
 app.use(passport.authenticate('session'));
