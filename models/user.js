@@ -1,18 +1,23 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../utilities/database');
 
-const Project = sequelize.define('project', {
+const User = sequelize.define('user', {
 	id: {
 		type: Sequelize.INTEGER,
 		autoIncrement: true,
 		AllowNull: false,
 		primaryKey: true
 	},
-	title: {
+	username: {
 		type: Sequelize.STRING,
-		AllowNull: false,
+		AllowNull: false
 	},
-	description: Sequelize.STRING
+	hashed_password: {
+		type: Sequelize.BLOB,
+	},
+	salt: {
+		type: Sequelize.BLOB
+	}
 });
 
-module.exports = Project;
+module.exports = User;
