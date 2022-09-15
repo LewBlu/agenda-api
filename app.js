@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const LocalStrategy = require('passport-local');
 const MySQLStore = require('express-mysql-session')(session);
 
+// Database credentials (Used for session)
 const db_options = {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -15,15 +16,17 @@ const db_options = {
     database: process.env.DB_NAME,
 };
 
+// Required Models
 const User = require('./models/user');
+
 // Require routes
 const projectRoutes = require('./routes/projects');
 const { nextTick } = require('process');
 
-// Initialize api
+// Initialize application
 const app = express();
 
-// Parse the incoming data (json format expected)
+// Parse the incoming data for use in middlewares (json format expected)
 app.use(bodyParser.json());
 
 app.use(session({
@@ -32,9 +35,9 @@ app.use(session({
 	saveUninitialized: true,
 	store: new MySQLStore(db_options)
 }));
+
 app.use(passport.initialize());
 app.use(passport.authenticate('session'));
-
 
 /* -------------------------------------------------------------------------- */
 /*                               User Serializer                              */
