@@ -45,7 +45,7 @@ app.use(passport.authenticate('session'));
 
 passport.serializeUser(function (user, cb) {
     process.nextTick(function () {
-        cb(null, { id: user.id, username: user.username });
+        cb(null, { id: user.id, username: user.username, firstname: user.firstname, lastname: user.lastname });
     });
 });
 
@@ -57,10 +57,9 @@ passport.deserializeUser(function (user, cb) {
 
 // Local Strategy
 passport.use(new LocalStrategy((username, password, callback) => {
-	User.findOne({ username: 'lewis'}).then(result => {
-		console.log(result);
-		if (!result.length) { return callback(null, false, { message: 'Incorrect username or password.' }); }
-		crypto.pbkdf2('password', result.salt, 310000, 32, 'sha256', function (err, hashedPassword) {
+	User.findOne({where: { username: username}}).then(result => {
+		if (!result) { return callback(null, false, { message: 'Incorrect username or password.' }); }
+		crypto.pbkdf2(password, result.salt, 310000, 32, 'sha256', function (err, hashedPassword) {
             if (err) { return callback(err); }
             if (!crypto.timingSafeEqual(result.hashed_password, hashedPassword)) {
                 return callback(null, false, { message: 'Incorrect username or password.' });
@@ -90,12 +89,14 @@ app.post('/login', passport.authenticate('local', {
 // Route for creating a user
 app.post('/signup', (req, res, next) => {
     const salt = crypto.randomBytes(16);
-    crypto.pbkdf2('password', salt, 310000, 32, 'sha256', function (err, hashedPassword) {
+    crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function (err, hashedPassword) {
         if (err) { return next(err); }
-		User.create({username: 'lewis', hashed_password: hashedPassword, salt: salt}).then(result => {
+		User.create({username: req.body.username, hashed_password: hashedPassword, salt: salt, firstname: req.body.firstname, lastname: req.body.lastname}).then(result => {
 			let user = {
                 id: result.id,
-                username: result.username
+                username: result.username,
+				firstname: result.firstname,
+				lastname: result.lastname
             };
             req.login(user, function (err) {
                 if (err) { return next(err); }

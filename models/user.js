@@ -17,6 +17,12 @@ const User = sequelize.define('user', {
 	},
 	salt: {
 		type: Sequelize.BLOB
+	},
+	firstname: {
+		type: Sequelize.STRING
+	},
+	lastname: {
+		type: Sequelize.STRING
 	}
 });
 
