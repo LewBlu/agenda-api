@@ -45,7 +45,7 @@ app.use(passport.authenticate('session'));
 
 passport.serializeUser(function (user, cb) {
     process.nextTick(function () {
-        cb(null, { id: user.id, username: user.username, firstname: user.firstname, lastname: user.lastname });
+        cb(null, { id: user.id, username: user.username, firstname: user.firstname, lastname: user.lastname, email: user.email });
     });
 });
 
@@ -91,12 +91,13 @@ app.post('/signup', (req, res, next) => {
     const salt = crypto.randomBytes(16);
     crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', function (err, hashedPassword) {
         if (err) { return next(err); }
-		User.create({username: req.body.username, hashed_password: hashedPassword, salt: salt, firstname: req.body.firstname, lastname: req.body.lastname}).then(result => {
+		User.create({username: req.body.username, hashed_password: hashedPassword, salt: salt, firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email}).then(result => {
 			let user = {
                 id: result.id,
                 username: result.username,
 				firstname: result.firstname,
-				lastname: result.lastname
+				lastname: result.lastname,
+				email: result.email
             };
             req.login(user, function (err) {
                 if (err) { return next(err); }
@@ -104,6 +105,13 @@ app.post('/signup', (req, res, next) => {
             });
 		}).catch(err => console.log(err));
     });
+});
+
+app.get('/logout', function(req, res, next) {
+	req.logout(function(err) {
+		if (err) { return next(err); }
+		res.status(200).json({message: 'User logged out.'});
+	});
 });
 
 // Define routes

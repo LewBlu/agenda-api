@@ -3,7 +3,10 @@ const { validationResult } = require('express-validator');
 
 // Get a list of all the projects
 exports.getProjects = (req, res, next) => {
-    Project.findAll().then(result => {
+	if(!req.isAuthenticated()) {
+		return res.status(401).json({message: 'User not logged in'});
+	}
+	Project.findAll().then(result => {
 		return res.status(200).json({message: 'Fetched projects successfully.', result: result});
 	}).catch(err => next(err));
 };
