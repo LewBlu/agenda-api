@@ -14,15 +14,21 @@ const User = sequelize.define('user', {
 	},
 	hashed_password: {
 		type: Sequelize.BLOB,
+		AllowNull: false
 	},
 	salt: {
-		type: Sequelize.BLOB
+		type: Sequelize.BLOB,
+		AllowNull: false
 	},
 	firstname: {
 		type: Sequelize.STRING
 	},
 	lastname: {
 		type: Sequelize.STRING
+	},
+	email: {
+		type: Sequelize.STRING,
+		AllowNull: false
 	}
 });
 
