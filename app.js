@@ -7,6 +7,7 @@ const session = require('express-session');
 const crypto = require('crypto');
 const LocalStrategy = require('passport-local');
 const MySQLStore = require('express-mysql-session')(session);
+const { nextTick } = require('process');
 
 // Database credentials (Used for session)
 const db_options = {
@@ -21,7 +22,7 @@ const User = require('./models/user');
 
 // Require routes
 const projectRoutes = require('./routes/projects');
-const { nextTick } = require('process');
+
 
 // Initialize application
 const app = express();

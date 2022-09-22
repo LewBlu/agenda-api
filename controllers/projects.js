@@ -3,9 +3,7 @@ const { validationResult } = require('express-validator');
 
 // Get a list of all the projects
 exports.getProjects = (req, res, next) => {
-	if(!req.isAuthenticated()) {
-		return res.status(401).json({message: 'User not logged in'});
-	}
+	if(!req.isAuthenticated()) { return res.status(401).json({message: 'Invalid user credentials'}); }
 	Project.findAll().then(result => {
 		return res.status(200).json({message: 'Fetched projects successfully.', result: result});
 	}).catch(err => next(err));
@@ -21,6 +19,7 @@ exports.getProjectByID = (req, res, next) => {
 
 // Create a project
 exports.createProject = (req, res, next) => {
+	if(!req.isAuthenticated()) { return res.status(401).json({message: 'Invalid user credentials'}); }
 	const errors = validationResult(req);
     if(!errors.isEmpty()){
         const error = new Error('Validation failed, entered data is incorrect.');
