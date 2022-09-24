@@ -47,9 +47,10 @@ app.use(session({
 	store: new MySQLStore(db_options),
 	cookie: {
 		path: "/",
-		httpOnly: true,
+		httpOnly: false,
 		secure: true,
-		sameSite: 'none'
+		sameSite: 'none',
+		maxAge: 3600000 // Set cookie to last 1 hour
 	}
 }));
 
