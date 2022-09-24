@@ -1,5 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const fs = require('fs');
+const https = require('https');
 const dotenv = require('dotenv').config();
 const sequelize = require('./utilities/database');
 const passport = require('passport');
@@ -23,9 +25,17 @@ const User = require('./models/user');
 // Require routes
 const projectRoutes = require('./routes/projects');
 
-
 // Initialize application
 const app = express();
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL); // * allows all, or you can limit by domain
+    res.setHeader('Access-Control-Allow-Methods', '*'); // Set which headers you want to allow
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // These 2 are recommended
+    res.setHeader('Access-Control-Expose-Headers', 'Set-Cookie'); // Required to allow the returned cookie to be set
+	res.setHeader('Access-Control-Allow-Credentials', 'true'); // Required to allow auth credentials
+    next();
+});
 
 // Parse the incoming data for use in middlewares (json format expected)
 app.use(bodyParser.json());
@@ -34,7 +44,13 @@ app.use(session({
 	secret: 'keyboard cat',
 	resave: true,
 	saveUninitialized: true,
-	store: new MySQLStore(db_options)
+	store: new MySQLStore(db_options),
+	cookie: {
+		path: "/",
+		httpOnly: true,
+		secure: true,
+		sameSite: 'none'
+	}
 }));
 
 app.use(passport.initialize());
@@ -82,10 +98,10 @@ const auth = function (req, res, next) {
 }
 
 // Route for submitting login
-app.post('/login', passport.authenticate('local', {
-    successRedirect: '/home2',
-    failureRedirect: '/login2'
-}));
+app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureMessage: true }),
+	(req, res) => {
+		return res.status(200).json({success: 'true'});
+	});
 
 // Route for creating a user
 app.post('/signup', (req, res, next) => {
@@ -120,5 +136,9 @@ app.use('/projects',projectRoutes);
 
 // Listen for requests
 sequelize.sync().then(result => {
-	app.listen(8080);
+	const httpsOptions = {
+		key: fs.readFileSync('key.pem'),
+		cert: fs.readFileSync('cert.pem')
+	}
+	const server = https.createServer(httpsOptions, app).listen(8080);
 }).catch(err => console.log(err));
