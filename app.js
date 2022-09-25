@@ -43,7 +43,7 @@ app.use(bodyParser.json());
 app.use(session({
 	secret: 'keyboard cat',
 	resave: true,
-	saveUninitialized: true,
+	saveUninitialized: false,
 	store: new MySQLStore(db_options),
 	cookie: {
 		path: "/",
@@ -128,6 +128,7 @@ app.post('/signup', (req, res, next) => {
 app.get('/logout', function(req, res, next) {
 	req.logout(function(err) {
 		if (err) { return next(err); }
+		req.session.destroy();
 		res.status(200).json({message: 'User logged out.'});
 	});
 });
