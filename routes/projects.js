@@ -7,6 +7,7 @@ const projectsController = require('../controllers/projects');
 
 // Project specific routes
 router.get('/', projectsController.getProjects);
+router.get('/my-projects', projectsController.getUserProjects);
 router.get('/:projectID', projectsController.getProjectByID);
 router.post('/create',[
 	body('title').trim().isLength({min: 3})

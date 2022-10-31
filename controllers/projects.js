@@ -9,6 +9,14 @@ exports.getProjects = (req, res, next) => {
 	}).catch(err => next(err));
 };
 
+// Get a list of projects owned by the logged in user
+exports.getUserProjects = (req, res, next) => {
+	if(!req.isAuthenticated()) { return res.status(401).json({message: 'Invalid user credentials'}); }
+	Project.findAll({where: {userId: req.user.id}}).then(result => {
+		return res.status(200).json({message: 'Fetched projectsddd successfully', result: result});
+	}).catch(err => next(err));
+}
+
 // Fetch a specific project based on the ID of the project
 exports.getProjectByID = (req, res, next) => {
 	const projectID = req.params.projectID;
