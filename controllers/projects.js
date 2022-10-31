@@ -26,6 +26,7 @@ exports.createProject = (req, res, next) => {
         error.statusCode = 422;
         throw error;
     }
+	req.body.userId = req.user.id; // Add the userId to the request to associate the project to it's owner
 	Project.create(req.body).then(result => {
 		return res.status(200).json({message: 'Created project successfully.', result: result});
 	}).catch(err => next(err));

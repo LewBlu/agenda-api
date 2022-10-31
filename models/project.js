@@ -12,7 +12,11 @@ const Project = sequelize.define('project', {
 		type: Sequelize.STRING,
 		AllowNull: false,
 	},
-	description: Sequelize.STRING
+	description: Sequelize.STRING,
+	key: {
+		type: Sequelize.STRING,
+		allowNull: false
+	}
 });
 
 module.exports = Project;

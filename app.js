@@ -21,6 +21,10 @@ const db_options = {
 
 // Required Models
 const User = require('./models/user');
+const Project = require('./models/project');
+
+User.hasMany(Project);
+Project.belongsTo(User);
 
 // Require routes
 const projectRoutes = require('./routes/projects');
